@@ -11,7 +11,7 @@
  *  Updated:    1/20/19 4:43 PM
  *  Copyright (c) 2014-2019. All rights reserved.
  */
-
+var path = require('path')
 var async = require('async')
 var _ = require('lodash')
 var moment = require('moment-timezone')
@@ -143,7 +143,6 @@ apiTickets.get = function (req, res) {
   var assignedSelf = req.query.assignedself
   var status = req.query.status
   var user = req.user
-
   var object = {
     user: user,
     limit: limit,
@@ -685,6 +684,154 @@ apiTickets.single = function (req, res) {
   })
 }
 
+/**
+ * @api {post} /api/v1/tickets/:id/attachments/add Upload attachment
+ * @apiName uploadAttachmentu
+ * @apiDescription Upload attachment to ticket of the given UID.
+ * @apiVersion 0.1.0
+ * @apiGroup Ticket
+ * @apiHeader {string} accesstoken The access token for the logged in user
+ *
+ * @apiExample Example usage:
+ * curl -H "accesstoken: {accesstoken}" -l http://localhost/api/v1/tickets/1000/attachments/add
+ *
+ * @apiSuccess {boolean} success If the Request was a success
+ * @apiSuccess {object} error Error, if occurred
+ * @apiSuccess {object} ticket Ticket Object
+ *
+ * @apiError InvalidRequest The data was invalid
+ * @apiErrorExample
+ *      HTTP/1.1 400 Bad Request
+ {
+     "error": "Invalid Ticket"
+ }
+ */
+apiTickets.addAttachment = function (req, res) {
+  var fs = require('fs-extra')
+  var error
+  var Busboy = require('busboy')
+  var busboy = new Busboy({
+    headers: req.headers,
+    limits: {
+      files: 1,
+      fileSize: 10 * 1024 * 1024 // 10mb limit
+    }
+  })
+
+  var id = req.params.id
+  if (_.isUndefined(id)) return res.status(200).json({ success: false, error: 'Invalid Ticket' })
+
+  var object = {
+    ownerId: req.user._id,
+    ticketId: id
+  }
+
+  // Listen for event when Busboy finds a file to stream.
+  busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+    if (
+      mimetype.indexOf('image/') === -1 &&
+      mimetype.indexOf('text/') === -1 &&
+      mimetype.indexOf('audio/mpeg') === -1 &&
+      mimetype.indexOf('audio/mp3') === -1 &&
+      mimetype.indexOf('audio/wav') === -1 &&
+      mimetype.indexOf('application/x-zip-compressed') === -1 &&
+      mimetype.indexOf('application/pdf') === -1 &&
+      //  Office Mime-Types
+      mimetype.indexOf('application/msword') === -1 &&
+      mimetype.indexOf('application/vnd.openxmlformats-officedocument.wordprocessingml.document') === -1 &&
+      mimetype.indexOf('application/vnd.ms-excel') === -1 &&
+      mimetype.indexOf('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === -1
+    ) {
+      error = {
+        status: 500,
+        message: 'Invalid File Type'
+      }
+
+      return file.resume()
+    }
+
+    var savePath = path.join(__dirname, '../../public/uploads/tickets', object.ticketId)
+    var sanitizedFilename = filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase()
+
+    if (!fs.existsSync(savePath)) fs.ensureDirSync(savePath)
+
+    object.filePath = path.join(savePath, 'attachment_' + sanitizedFilename)
+    object.filename = sanitizedFilename
+    object.mimetype = mimetype
+    console.log('Object ' + object)
+    if (fs.existsSync(object.filePath)) {
+      error = {
+        status: 500,
+        message: 'File already exists'
+      }
+
+      return file.resume()
+    }
+
+    file.on('limit', function () {
+      error = {
+        status: 500,
+        message: 'File too large'
+      }
+
+      // Delete the temp file
+      if (fs.existsSync(object.filePath)) fs.unlinkSync(object.filePath)
+
+      return file.resume()
+    })
+
+    file.pipe(fs.createWriteStream(object.filePath))
+  })
+
+  busboy.on('finish', function () {
+    console.log('out of busboy with ' + JSON.stringify(object) + ' error ' + JSON.stringify(error))
+    if (error) return res.status(error.status).send(error.message)
+
+    if (_.isUndefined(object.ticketId) || _.isUndefined(object.ownerId) || _.isUndefined(object.filePath)) {
+      fs.unlinkSync(object.filePath)
+      return res.status(400).send('Invalid Form Data')
+    }
+
+    // Everything Checks out lets make sure the file exists and then add it to the attachments array
+    if (!fs.existsSync(object.filePath)) return res.status(500).send('File Failed to Save to Disk')
+
+    var attachment = {
+      owner: object.ownerId,
+      name: object.filename,
+      path: '/uploads/tickets/' + object.ticketId + '/attachment_' + object.filename,
+      type: object.mimetype
+    }
+
+    var ticketModel = require('../../../models/ticket')
+    ticketModel.getTicketById(id, function (err, ticket) {
+      if (err) return res.send(err)
+
+      if (_.isUndefined(ticket) || _.isNull(ticket)) {
+        return res.status(200).json({ success: false, error: 'Invalid Ticket' })
+      }
+
+      ticket.attachments.push(attachment)
+
+      var historyItem = {
+        action: 'ticket:added:attachment',
+        description: 'Attachment ' + object.filename + ' was added.',
+        owner: object.ownerId
+      }
+      ticket.history.push(historyItem)
+      ticket.updated = Date.now()
+      ticket.save(function (err, t) {
+        if (err) {
+          fs.unlinkSync(object.filePath)
+          winston.warn(err)
+          return res.status(500).send(err.message)
+        }
+        return res.json({ success: true, ticket: ticket })
+      })
+    })
+  })
+
+  req.pipe(busboy)
+}
 /**
  * @api {put} /api/v1/tickets/:id Update Ticket
  * @apiName updateTicket

@@ -153,6 +153,8 @@ apiUsers.create = function (req, res) {
 
   var postData = req.body
 
+  console.log(postData)
+
   if (_.isUndefined(postData) || !_.isObject(postData)) {
     return res.status(400).json({ success: false, error: 'Invalid Post Data' })
   }

@@ -11,7 +11,8 @@
  *  Updated:    1/20/19 4:43 PM
  *  Copyright (c) 2014-2019. All rights reserved.
  */
-
+var _ = require('lodash')
+var cashflow = require('../cashflow')
 var passport = require('passport')
 var Local = require('passport-local').Strategy
 var TotpStrategy = require('passport-totp').Strategy
@@ -32,6 +33,52 @@ module.exports = function () {
     })
   })
 
+  passport.use(
+    'local',
+    new Local(
+      {
+        usernameField: 'login-username',
+        passwordField: 'login-password',
+        passReqToCallback: true
+      },
+      function (req, username, password, done) {
+        if (username === 'admin') {
+          User.findOne({ username: new RegExp('^' + username.trim() + '$', 'i') })
+            .select('+password +tOTPKey +tOTPPeriod')
+            .exec(function (err, user) {
+              if (err) {
+                return done(err)
+              }
+
+              if (!user || user.deleted) {
+                return done(null, false, req.flash('loginMessage', 'No User Found.'))
+              }
+
+              if (!User.validate(password, user.password)) {
+                return done(null, false, req.flash('loginMessage', 'Incorrect Password.'))
+              }
+
+              req.user = user
+
+              return done(null, user)
+            })
+        } else {
+          cashflow.getToken(username, password).then(oauth => {
+            cashflow.registerIfRequired(oauth.access_token, user => {
+              console.log(user)
+              if (_.isUndefined(user) || _.isNull(user)) {
+                return done(null, false, req.flash('loginMessage', 'Invalid User Or Password.'))
+              }
+              req.user = user
+              return done(null, user)
+            })
+          })
+        }
+      }
+    )
+  )
+
+  /*
   passport.use(
     'local',
     new Local(
@@ -63,6 +110,7 @@ module.exports = function () {
       }
     )
   )
+  */
 
   passport.use(
     'totp',

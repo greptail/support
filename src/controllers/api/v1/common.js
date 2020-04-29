@@ -15,7 +15,6 @@
 var _ = require('lodash')
 var async = require('async')
 var winston = require('winston')
-
 var commonV1 = {}
 
 /**
@@ -42,6 +41,7 @@ var commonV1 = {}
  * delete resUser.iOSDeviceToken;
  *
  */
+
 commonV1.login = function (req, res) {
   var userModel = require('../../../models/user')
   var username = req.body.username

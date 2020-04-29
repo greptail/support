@@ -16,6 +16,8 @@
 
 var _ = require('lodash')
 var db = require('../database')
+var cashflow = require('../cashflow/index.js')
+
 var mongoose = require('mongoose')
 var winston = require('winston')
 
@@ -171,7 +173,23 @@ middleware.checkOrigin = function (req, res, next) {
 middleware.api = function (req, res, next) {
   var accessToken = req.headers.accesstoken
 
+  if (_.isUndefined(accessToken) || _.isNull(accessToken) || accessToken === 'undefined') {
+    return next()
+  } else {
+    console.log('fetching request by token ' + accessToken)
+    cashflow.registerIfRequired(accessToken, authenticatedUser => {
+      console.log(authenticatedUser)
+      if (_.isUndefined(authenticatedUser) || _.isNull(authenticatedUser))
+        return res.status(401).json({ error: 'Invalid Access Token' })
+      req.user = authenticatedUser
+      return next()
+    })
+  }
+
+  /*
+
   var userSchema = require('../models/user')
+
 
   if (_.isUndefined(accessToken) || _.isNull(accessToken)) {
     var user = req.user
@@ -188,6 +206,7 @@ middleware.api = function (req, res, next) {
 
     return next()
   })
+  */
 }
 
 middleware.hasAuth = middleware.api

@@ -22,14 +22,14 @@ var sanitizeHtml = require('sanitize-html')
 
 var apiTickets = {}
 
-function buildGraphData (arr, days, callback) {
+function buildGraphData(arr, days, callback) {
   var graphData = []
   var today = moment()
     .hour(23)
     .minute(59)
     .second(59)
   var timespanArray = []
-  for (var i = days; i--; ) {
+  for (var i = days; i--;) {
     timespanArray.push(i)
   }
 
@@ -42,10 +42,10 @@ function buildGraphData (arr, days, callback) {
       return (
         v.date <= d.toDate() &&
         v.date >=
-          d
-            .clone()
-            .subtract(1, 'd')
-            .toDate()
+        d
+          .clone()
+          .subtract(1, 'd')
+          .toDate()
       )
     })
 
@@ -61,7 +61,7 @@ function buildGraphData (arr, days, callback) {
   return graphData
 }
 
-function buildAvgResponse (ticketArray, callback) {
+function buildAvgResponse(ticketArray, callback) {
   var cbObj = {}
   var $ticketAvg = []
   _.each(ticketArray, function (ticket) {
@@ -750,7 +750,7 @@ apiTickets.addAttachment = function (req, res) {
       return file.resume()
     }
 
-    var savePath = path.join(__dirname, '../../public/uploads/tickets', object.ticketId)
+    var savePath = path.join(__dirname, '../../../public/uploads/tickets', object.ticketId)
     var sanitizedFilename = filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase()
 
     if (!fs.existsSync(savePath)) fs.ensureDirSync(savePath)
@@ -1590,7 +1590,7 @@ apiTickets.getTicketStats = function (req, res) {
   // return res.send(obj);
 }
 
-function parseTicketStats (role, tickets, callback) {
+function parseTicketStats(role, tickets, callback) {
   if (_.isEmpty(tickets)) return callback({ tickets: tickets, tags: {} })
   var t = []
   var tags = {}

@@ -243,7 +243,7 @@ class SingleTicketContainer extends React.Component {
     const hasTicketUpdate =
       this.ticket &&
       this.ticket.status !== 3 &&
-      (helpers.hasPermOverRole(this.ticket.assignee.role, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner.role, null, 'tickets:update', true));
+      (helpers.hasPermOverRole(this.ticket.assignee ? this.ticket.assignee.role : null, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner.role, null, 'tickets:update', true));
 
 
     return (
@@ -262,7 +262,7 @@ class SingleTicketContainer extends React.Component {
                     ticketId={this.ticket._id}
                     status={this.ticket.status}
                     onStatusChange={status => (this.ticket.status = status)}
-                    hasPerm={helpers.hasPermOverRole(this.ticket.assignee.role, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner.role, null, 'tickets:update', true)}
+                    hasPerm={helpers.hasPermOverRole(this.ticket.assignee ? this.ticket.assignee.role : null, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner.role, null, 'tickets:update', true)}
                   />
                 </div>
                 {/*  Left Side */}
@@ -545,7 +545,7 @@ class SingleTicketContainer extends React.Component {
                       ticketId={this.ticket._id}
                       status={this.ticket.status}
                       owner={this.ticket.owner}
-                      assignee={this.ticket.owner}
+                      assignee={this.ticket.assignee}
                       subject={this.ticket.subject}
                       issue={this.ticket.issue}
                       date={this.ticket.date}

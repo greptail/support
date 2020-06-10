@@ -35,16 +35,18 @@ class IssuePartial extends React.Component {
   @observable ticketId = ''
   @observable status = null
   @observable owner = null
+  @observable assignee = null
   @observable subject = ''
   @observable issue = ''
   @observable attachments = []
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.ticketId = this.props.ticketId
     this.status = this.props.status
     this.owner = this.props.owner
+    this.assignee = this.props.assignee
     this.subject = this.props.subject
     this.issue = this.props.issue
     this.attachments = this.props.attachments
@@ -53,41 +55,42 @@ class IssuePartial extends React.Component {
     this.onUpdateTicketAttachments = this.onUpdateTicketAttachments.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     setupImages(this)
 
     socket.socket.on('updateTicketIssue', this.onUpdateTicketIssue)
     socket.socket.on('updateTicketAttachments', this.onUpdateTicketAttachments)
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.ticketId !== this.props.ticketId) this.ticketId = this.props.ticketId
     if (prevProps.status !== this.props.status) this.status = this.props.status
     if (prevProps.owner !== this.props.owner) this.owner = this.props.owner
+    if (prevProps.assignee !== this.props.assignee) this.assignee = this.props.assignee
     if (prevProps.subject !== this.props.subject) this.subject = this.props.subject
     if (prevProps.issue !== this.props.issue) this.issue = this.props.issue
     if (prevProps.attachments !== this.props.attachments) this.attachments = this.props.attachments
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     socket.socket.off('updateTicketIssue', this.onUpdateTicketIssue)
     socket.socket.off('updateTicketAttachments', this.onUpdateTicketAttachments)
   }
 
-  onUpdateTicketIssue (data) {
+  onUpdateTicketIssue(data) {
     if (this.ticketId === data._id) {
       this.subject = data.subject
       this.issue = data.issue
     }
   }
 
-  onUpdateTicketAttachments (data) {
+  onUpdateTicketAttachments(data) {
     if (this.ticketId === data.ticket._id) {
       this.attachments = data.ticket.attachments
     }
   }
 
-  onAttachmentInputChange (e) {
+  onAttachmentInputChange(e) {
     const formData = new FormData()
     const attachmentFile = e.target.files[0]
     formData.append('ticketId', this.ticketId)
@@ -109,7 +112,7 @@ class IssuePartial extends React.Component {
       })
   }
 
-  removeAttachment (e, attachmentId) {
+  removeAttachment(e, attachmentId) {
     axios
       .delete(`/api/v1/tickets/${this.ticketId}/attachments/remove/${attachmentId}`)
       .then(() => {
@@ -123,7 +126,7 @@ class IssuePartial extends React.Component {
       })
   }
 
-  render () {
+  render() {
     return (
       <div className='initial-issue uk-clearfix'>
         <Avatar image={this.owner.image} userId={this.owner._id} />
@@ -163,7 +166,7 @@ class IssuePartial extends React.Component {
           </div>
         </div>
         {/* Permissions on Fragment for edit */}
-        {this.status !== 3 && helpers.hasPermOverRole(this.props.owner.role, null, 'tickets:update', true) && (
+        {this.status !== 3 && (helpers.hasPermOverRole(this.props.owner.role, null, 'tickets:update', true) || helpers.hasPermOverRole(this.props.assignee.role, null, 'tickets:update', true)) && (
           <Fragment>
             <div
               className={'edit-issue'}
@@ -203,6 +206,7 @@ IssuePartial.propTypes = {
   ticketId: PropTypes.string.isRequired,
   status: PropTypes.number.isRequired,
   owner: PropTypes.object.isRequired,
+  assignee: PropTypes.object.isRequired,
   subject: PropTypes.string.isRequired,
   issue: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,

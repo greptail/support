@@ -78,7 +78,16 @@ cashflow.registerIfRequired = function (token, callback) {
     var result = response.result
 
     if (response.code === 200) {
-      userSchema.findOne({ username: new RegExp('^' + result.mobileNumber + '$', 'i') }).exec(function (err, user) {
+
+      var mobile = 0;
+      if (result.userType = 'managementUser') {
+        mobile = result.mobileNumberAndCountry.msisdn;
+      }
+      else {
+        mobile = result.mobileNumber;
+      }
+
+      userSchema.findOne({ username: new RegExp('^' + mobile + '$', 'i') }).exec(function (err, user) {
         if (err) {
           console.log('Error ' + err)
         }
@@ -86,13 +95,7 @@ cashflow.registerIfRequired = function (token, callback) {
           var role = resolveRole(result.userType)
           roleSchema.getRoleByName(role, function (err, role) {
 
-            var mobile = 0;
-            if (result.userType = 'managementUser') {
-              mobile = result.mobileNumberAndCountry.msisdn;
-            }
-            else {
-              mobile = result.mobileNumber;
-            }
+
             var account = new userSchema({
               username: mobile,
               password: 'na',

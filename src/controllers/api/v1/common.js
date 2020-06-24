@@ -51,6 +51,74 @@ commonV1.login = function (req, res) {
     return res.sendStatus(403)
   }
 
+  if (username === 'admin') {
+    User.findOne({ username: new RegExp('^' + username.trim() + '$', 'i') })
+      .select('+password +tOTPKey +tOTPPeriod')
+      .exec(function (err, user) {
+        if (err) {
+          return res.status(200).json({ success: false, error: err })
+        } else if (!user || user.deleted) {
+          return res.status(200).json({ success: false, error: 'No User Found' })
+        } else if (!User.validate(password, user.password)) {
+          return res.status(200).json({ success: false, error: 'Incorrect Password' })
+        }
+
+        req.user = user
+
+        var resUser = _.clone(user._doc)
+        delete resUser.resetPassExpire
+        delete resUser.resetPassHash
+        delete resUser.password
+        delete resUser.iOSDeviceTokens
+        delete resUser.tOTPKey
+        delete resUser.__v
+        delete resUser.preferences
+
+        if (_.isUndefined(oauth.access_token) || _.isNull(oauth.access_token)) {
+          return res.status(200).json({ success: false, error: 'No API Key assigned to this User.' })
+        } else {
+          req.user = resUser
+          res.header('X-Subject-Token', oauth.access_token)
+          return res.json({
+            success: true,
+            accessToken: resUser.accessToken,
+            user: resUser
+          })
+        }
+      })
+  } else {
+    cashflow.getToken(username, password).then(oauth => {
+      cashflow.registerIfRequired(oauth.access_token, user => {
+        console.log(user)
+        if (_.isUndefined(user) || _.isNull(user)) {
+          return res.status(200).json({ success: false, error: 'Invalid User Or Password.' })
+        } else {
+          var resUser = _.clone(user._doc)
+          delete resUser.resetPassExpire
+          delete resUser.resetPassHash
+          delete resUser.password
+          delete resUser.iOSDeviceTokens
+          delete resUser.tOTPKey
+          delete resUser.__v
+          delete resUser.preferences
+
+          if (_.isUndefined(oauth.access_token) || _.isNull(oauth.access_token)) {
+            return res.status(200).json({ success: false, error: 'No API Key assigned to this User.' })
+          } else {
+            req.user = resUser
+            res.header('X-Subject-Token', oauth.access_token)
+            return res.json({
+              success: true,
+              accessToken: oauth.access_token,
+              user: resUser
+            })
+          }
+        }
+      })
+    })
+  }
+
+  /*
   userModel.getUserByUsername(username, function (err, user) {
     if (err) return res.status(401).json({ success: false, error: err.message })
     if (!user) return res.status(401).json({ success: false, error: 'Invalid User' })
@@ -79,6 +147,7 @@ commonV1.login = function (req, res) {
       user: resUser
     })
   })
+  */
 }
 
 commonV1.getLoggedInUser = function (req, res) {

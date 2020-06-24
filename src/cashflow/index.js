@@ -1,11 +1,14 @@
+var PropertiesReader = require('properties-reader')
+var prop = PropertiesReader('/etc/assistance/app.properties')
 var cashflow = {}
-var apiEndPoint = 'https://cat.generalmobi.mobi/ag'
-var tokenEndPoint = 'https://cat.generalmobi.mobi/authserver/oauth/token'
-var clientId = 'mobile_ui'
-var clientSecret = 'test'
+
 var request = require('request')
 var userSchema = require('../models/user')
 var roleSchema = require('../models/role')
+var clientId = prop.get('client_id')
+var clientSecret = prop.get('secret')
+var apiEndPoint = prop.get('api.endpoint')
+var tokenEndPoint = prop.get('token.endpoint')
 
 var CUSTOMER_ROLE = 'User'
 var SUPPORT_ROLE = 'Support'
@@ -50,6 +53,7 @@ function executeTokenApi (username, password) {
   }
   return new Promise(function (resolve, reject) {
     request(options, function (error, response, body) {
+      // console.log(body)
       if (!error) {
         var result = null
         if (response.statusCode === 200) {
@@ -62,6 +66,7 @@ function executeTokenApi (username, password) {
 
         resolve(result)
       } else {
+        console.log('Error occured while fetching token ' + error)
         reject(error)
       }
     })
@@ -75,7 +80,7 @@ cashflow.registerIfRequired = function (token, callback) {
     if (response.code === 200) {
       userSchema.findOne({ username: new RegExp('^' + result.mobileNumber + '$', 'i') }).exec(function (err, user) {
         if (err) {
-          console.log(err)
+          console.log('Error ' + err)
         }
         if (user == null) {
           var role = resolveRole(result.userType)
@@ -91,7 +96,7 @@ cashflow.registerIfRequired = function (token, callback) {
             console.log('Registering user ' + account)
             account.save(function (err, a) {
               if (err) {
-                console.log(err)
+                console.log('Error ' + err)
               }
               callback(account)
             })
@@ -125,12 +130,13 @@ function executeUserDetailApi (token) {
   }
 
   var options = {
-    url: `${apiEndPoint}/uiObjects/api/v1/user`,
+    url: `${apiEndPoint}/uiObjects/openapi/v1/user`,
     method: 'GET',
     headers: oauth_header
   }
   return new Promise(function (resolve, reject) {
     request(options, function (error, response, body) {
+      console.log(body)
       if (!error) {
         if (response.statusCode === 200) {
           var apiResponse = JSON.parse(body)
@@ -144,19 +150,13 @@ function executeUserDetailApi (token) {
         }
         resolve(result)
       } else {
-        console.log(error)
+        console.log('Error ' + error)
 
         reject(error)
       }
     })
   })
 }
-/*
-var mongoose = require('mongoose');
-//Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1/trudesk';
-mongoose.connect(mongoDB, { useNewUrlParser: true });
-*/
 
 function resolveRole (userType) {
   if (userType == 'agent' || userType == 'distributor' || userType == 'superDistributor' || userType == 'operator') {
@@ -165,13 +165,23 @@ function resolveRole (userType) {
   return SUPPORT_ROLE
 }
 
+module.exports = cashflow
+
 /*
+var mongoose = require('mongoose');
+//Set up default mongoose connection
+var mongoDB = 'mongodb://127.0.0.1/trudesk';
+mongoose.connect(mongoDB, { useNewUrlParser: true });
+
+console.log(prop.get("client_id"));
+
+
 cashflow.getToken("8888888801", "Abc@1234").then((oauth) => {
 
-    cashflow.registerIfRequired(oauth.access_token, (response) => {
-        console.log(response);
-    });
+  console.log("Oauth " + oauth.access_token);
+  cashflow.registerIfRequired(oauth.access_token, (response) => {
+    console.log("Result " + response);
+  });
 });
-*/
 
-module.exports = cashflow
+*/

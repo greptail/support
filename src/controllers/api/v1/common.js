@@ -15,7 +15,7 @@
 var _ = require('lodash')
 var async = require('async')
 var winston = require('winston')
-var cashflow = require('../cashflow')
+var cashflow = require('../../../cashflow')
 var commonV1 = {}
 
 /**

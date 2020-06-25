@@ -39,7 +39,7 @@ cashflow.getUserDetails = async token => {
     })
 }
 
-function executeTokenApi(username, password) {
+function executeTokenApi (username, password) {
   var payload = `username=${username}&password=${password}&grant_type=password`
   var options = {
     url: tokenEndPoint,
@@ -78,13 +78,11 @@ cashflow.registerIfRequired = function (token, callback) {
     var result = response.result
 
     if (response.code === 200) {
-
-      var mobile = 0;
-      if (result.userType = 'managementUser') {
-        mobile = result.mobileNumberAndCountry.msisdn;
-      }
-      else {
-        mobile = result.mobileNumber;
+      var mobile = 0
+      if (result.userType === 'managementUser') {
+        mobile = result.mobileNumberAndCountry.msisdn
+      } else {
+        mobile = result.mobileNumber
       }
 
       userSchema.findOne({ username: new RegExp('^' + mobile + '$', 'i') }).exec(function (err, user) {
@@ -94,8 +92,6 @@ cashflow.registerIfRequired = function (token, callback) {
         if (user == null) {
           var role = resolveRole(result.userType)
           roleSchema.getRoleByName(role, function (err, role) {
-
-
             var account = new userSchema({
               username: mobile,
               password: 'na',
@@ -134,7 +130,7 @@ cashflow.registerIfRequired = function (token, callback) {
   })
 }
 
-function executeUserDetailApi(token) {
+function executeUserDetailApi (token) {
   var oauth_header = {
     Authorization: `Bearer ${token}`,
     'Content-type': 'application/json'
@@ -169,7 +165,7 @@ function executeUserDetailApi(token) {
   })
 }
 
-function resolveRole(userType) {
+function resolveRole (userType) {
   if (userType == 'agent' || userType == 'distributor' || userType == 'superDistributor' || userType == 'operator') {
     return CUSTOMER_ROLE
   }

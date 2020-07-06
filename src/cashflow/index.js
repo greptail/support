@@ -53,7 +53,7 @@ function executeTokenApi (username, password) {
   }
   return new Promise(function (resolve, reject) {
     request(options, function (error, response, body) {
-      // console.log(body)
+      console.log(body)
       if (!error) {
         var result = null
         if (response.statusCode === 200) {
@@ -143,7 +143,7 @@ function executeUserDetailApi (token) {
   }
   return new Promise(function (resolve, reject) {
     request(options, function (error, response, body) {
-      //console.log(body)
+      console.log(body)
       if (!error) {
         if (response.statusCode === 200) {
           var apiResponse = JSON.parse(body)
@@ -174,16 +174,15 @@ function resolveRole (userType) {
 
 module.exports = cashflow
 
+var mongoose = require('mongoose')
+// Set up default mongoose connection
+var mongoDB = 'mongodb://127.0.0.1/trudesk'
+mongoose.connect(mongoDB, { useNewUrlParser: true })
+
+console.log(prop.get('client_id'))
+
 /*
-var mongoose = require('mongoose');
-//Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1/trudesk';
-mongoose.connect(mongoDB, { useNewUrlParser: true });
-
-console.log(prop.get("client_id"));
-
-
-cashflow.getToken("8888888801", "Abc@1234").then((oauth) => {
+cashflow.getToken("8800049513", "Abc@1234").then((oauth) => {
 
   console.log("Oauth " + oauth.access_token);
   cashflow.registerIfRequired(oauth.access_token, (response) => {
@@ -191,4 +190,8 @@ cashflow.getToken("8888888801", "Abc@1234").then((oauth) => {
   });
 });
 
+
+cashflow.registerIfRequired("2057a8f7-f8fc-43f4-b5ff-76c2dde8db76", (response) => {
+  console.log("Result " + response);
+});
 */

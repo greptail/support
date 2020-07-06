@@ -96,6 +96,12 @@ module.exports = function (middleware, router, controllers) {
     apiv1,
     apiCtrl.tickets.addAttachment
   )
+  router.post(
+    '/api/v1/tickets/uploadImageMDE',
+    //   canUser('tickets:update'),
+    apiv1,
+    apiCtrl.tickets.uploadImageMDE
+  )
 
   // Tags
   router.get('/api/v1/count/tags', middleware.api, function (req, res) {

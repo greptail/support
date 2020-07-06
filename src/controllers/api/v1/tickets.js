@@ -19,17 +19,18 @@ var winston = require('winston')
 var permissions = require('../../../permissions')
 var emitter = require('../../../emitter')
 var sanitizeHtml = require('sanitize-html')
+var ticketsController = require('../../tickets.js')
 
 var apiTickets = {}
 
-function buildGraphData(arr, days, callback) {
+function buildGraphData (arr, days, callback) {
   var graphData = []
   var today = moment()
     .hour(23)
     .minute(59)
     .second(59)
   var timespanArray = []
-  for (var i = days; i--;) {
+  for (var i = days; i--; ) {
     timespanArray.push(i)
   }
 
@@ -42,10 +43,10 @@ function buildGraphData(arr, days, callback) {
       return (
         v.date <= d.toDate() &&
         v.date >=
-        d
-          .clone()
-          .subtract(1, 'd')
-          .toDate()
+          d
+            .clone()
+            .subtract(1, 'd')
+            .toDate()
       )
     })
 
@@ -61,7 +62,7 @@ function buildGraphData(arr, days, callback) {
   return graphData
 }
 
-function buildAvgResponse(ticketArray, callback) {
+function buildAvgResponse (ticketArray, callback) {
   var cbObj = {}
   var $ticketAvg = []
   _.each(ticketArray, function (ticket) {
@@ -685,6 +686,32 @@ apiTickets.single = function (req, res) {
 }
 
 /**
+ * @api {post} /api/v1/tickets/uploadImageMDE Upload attachment
+ * @apiName uploadAttachmentu
+ * @apiDescription Upload attachment to ticket of the given UID.
+ * @apiVersion 0.1.0
+ * @apiGroup Ticket
+ * @apiHeader {string} accesstoken The access token for the logged in user
+ *
+ * @apiExample Example usage:
+ * curl -H "accesstoken: {accesstoken}" -l http://localhost/api/v1/tickets/uploadImageMDE
+ *
+ * @apiSuccess {boolean} success If the Request was a success
+ * @apiSuccess {object} error Error, if occurred
+ * @apiSuccess {object} ticket Ticket Object
+ *
+ * @apiError InvalidRequest The data was invalid
+ * @apiErrorExample
+ *      HTTP/1.1 400 Bad Request
+ {
+     "error": "Invalid Ticket"
+ }
+ */
+apiTickets.uploadImageMDE = function (req, res) {
+  ticketsController.uploadImageMDE(req, res)
+}
+
+/**
  * @api {post} /api/v1/tickets/:id/attachments/add Upload attachment
  * @apiName uploadAttachmentu
  * @apiDescription Upload attachment to ticket of the given UID.
@@ -737,7 +764,6 @@ apiTickets.addAttachment = function (req, res) {
       mimetype.indexOf('application/x-zip-compressed') === -1 &&
       mimetype.indexOf('application/pdf') === -1 &&
       mimetype.indexOf('application/octet-stream') === -1 &&
-
       //  Office Mime-Types
       mimetype.indexOf('application/msword') === -1 &&
       mimetype.indexOf('application/vnd.openxmlformats-officedocument.wordprocessingml.document') === -1 &&
@@ -1592,7 +1618,7 @@ apiTickets.getTicketStats = function (req, res) {
   // return res.send(obj);
 }
 
-function parseTicketStats(role, tickets, callback) {
+function parseTicketStats (role, tickets, callback) {
   if (_.isEmpty(tickets)) return callback({ tickets: tickets, tags: {} })
   var t = []
   var tags = {}

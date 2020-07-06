@@ -73,6 +73,13 @@ module.exports = function (middleware, router, controllers) {
     canUser('tickets:view'),
     apiCtrl.tickets.getCountByGroup
   )
+
+  router.post(
+    '/api/v1/tickets/uploadImageMDE',
+    //   canUser('tickets:update'),
+    apiv1,
+    apiCtrl.tickets.uploadImageMDE
+  )
   router.get('/api/v1/tickets/stats', apiv1, apiCtrl.tickets.getTicketStats)
   router.get('/api/v1/tickets/stats/group/:group', apiv1, apiCtrl.tickets.getTicketStatsForGroup)
   router.get('/api/v1/tickets/stats/user/:user', apiv1, apiCtrl.tickets.getTicketStatsForUser)
@@ -96,12 +103,7 @@ module.exports = function (middleware, router, controllers) {
     apiv1,
     apiCtrl.tickets.addAttachment
   )
-  router.post(
-    '/api/v1/tickets/uploadImageMDE',
-    //   canUser('tickets:update'),
-    apiv1,
-    apiCtrl.tickets.uploadImageMDE
-  )
+
 
   // Tags
   router.get('/api/v1/count/tags', middleware.api, function (req, res) {

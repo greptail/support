@@ -20,6 +20,7 @@ var permissions = require('../../../permissions')
 var emitter = require('../../../emitter')
 var sanitizeHtml = require('sanitize-html')
 var ticketsController = require('../../tickets.js')
+const { is } = require('redux-saga/utils')
 
 var apiTickets = {}
 
@@ -1922,12 +1923,17 @@ apiTickets.removeAttachment = function (req, res) {
   if (_.isUndefined(user)) return res.status(400).json({ error: 'Invalid User Auth.' })
 
   var permissions = require('../../../permissions')
-  if (!permissions.canThis(user.role, 'tickets:removeAttachment'))
-    return res.status(401).json({ error: 'Invalid Permissions' })
 
   var ticketModel = require('../../../models/ticket')
   ticketModel.getTicketById(ticketId, function (err, ticket) {
     if (err) return res.status(400).send('Invalid Ticket Id')
+
+    const isTicketOwner = ticket.owner.id == user.id
+    if (!isTicketOwner) {
+      if (!permissions.canThis(user.role, 'tickets:removeAttachment'))
+        return res.status(401).json({ error: 'Invalid Permissions' })
+    }
+
     ticket.getAttachment(attachmentId, function (a) {
       ticket.removeAttachment(user._id, attachmentId, function (err, ticket) {
         if (err) return res.status(400).json({ error: 'Invalid Request.' })

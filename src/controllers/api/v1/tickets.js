@@ -24,14 +24,14 @@ const { is } = require('redux-saga/utils')
 
 var apiTickets = {}
 
-function buildGraphData (arr, days, callback) {
+function buildGraphData(arr, days, callback) {
   var graphData = []
   var today = moment()
     .hour(23)
     .minute(59)
     .second(59)
   var timespanArray = []
-  for (var i = days; i--; ) {
+  for (var i = days; i--;) {
     timespanArray.push(i)
   }
 
@@ -44,10 +44,10 @@ function buildGraphData (arr, days, callback) {
       return (
         v.date <= d.toDate() &&
         v.date >=
-          d
-            .clone()
-            .subtract(1, 'd')
-            .toDate()
+        d
+          .clone()
+          .subtract(1, 'd')
+          .toDate()
       )
     })
 
@@ -63,7 +63,7 @@ function buildGraphData (arr, days, callback) {
   return graphData
 }
 
-function buildAvgResponse (ticketArray, callback) {
+function buildAvgResponse(ticketArray, callback) {
   var cbObj = {}
   var $ticketAvg = []
   _.each(ticketArray, function (ticket) {
@@ -1619,7 +1619,7 @@ apiTickets.getTicketStats = function (req, res) {
   // return res.send(obj);
 }
 
-function parseTicketStats (role, tickets, callback) {
+function parseTicketStats(role, tickets, callback) {
   if (_.isEmpty(tickets)) return callback({ tickets: tickets, tags: {} })
   var t = []
   var tags = {}
@@ -1935,6 +1935,9 @@ apiTickets.removeAttachment = function (req, res) {
     }
 
     ticket.getAttachment(attachmentId, function (a) {
+      if (!a) {
+        return res.status(400).json({ error: 'Attachment (' + attachmentId + ') not found' })
+      }
       ticket.removeAttachment(user._id, attachmentId, function (err, ticket) {
         if (err) return res.status(400).json({ error: 'Invalid Request.' })
 

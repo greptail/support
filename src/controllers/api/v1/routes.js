@@ -93,8 +93,8 @@ module.exports = function (middleware, router, controllers) {
   router.put('/api/v1/tickets/:id/subscribe', apiv1, apiCtrl.tickets.subscribe)
   router.delete(
     '/api/v1/tickets/:tid/attachments/remove/:aid',
-    canUser('tickets:update'),
     apiv1,
+    canUser('tickets:update'),
     apiCtrl.tickets.removeAttachment
   )
   router.post(

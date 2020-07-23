@@ -24,14 +24,14 @@ const { is } = require('redux-saga/utils')
 
 var apiTickets = {}
 
-function buildGraphData(arr, days, callback) {
+function buildGraphData (arr, days, callback) {
   var graphData = []
   var today = moment()
     .hour(23)
     .minute(59)
     .second(59)
   var timespanArray = []
-  for (var i = days; i--;) {
+  for (var i = days; i--; ) {
     timespanArray.push(i)
   }
 
@@ -44,10 +44,10 @@ function buildGraphData(arr, days, callback) {
       return (
         v.date <= d.toDate() &&
         v.date >=
-        d
-          .clone()
-          .subtract(1, 'd')
-          .toDate()
+          d
+            .clone()
+            .subtract(1, 'd')
+            .toDate()
       )
     })
 
@@ -63,7 +63,7 @@ function buildGraphData(arr, days, callback) {
   return graphData
 }
 
-function buildAvgResponse(ticketArray, callback) {
+function buildAvgResponse (ticketArray, callback) {
   var cbObj = {}
   var $ticketAvg = []
   _.each(ticketArray, function (ticket) {
@@ -1112,6 +1112,66 @@ apiTickets.postComment = function (req, res) {
 }
 
 /**
+ * @api {post} /api/v1/tickets/updatecomment Add Comment
+ * @apiName addComment
+ * @apiDescription Adds comment to the given Ticket Id
+ * @apiVersion 0.1.0
+ * @apiGroup Ticket
+ * @apiHeader {string} accesstoken The access token for the logged in user
+ * @apiExample Example usage:
+ * curl -X POST
+ *      -H "Content-Type: application/json"
+ *      -H "accesstoken: {accesstoken}"
+ *      -d "{\"comment\":\"{comment}\",\"owner\":{ownerId}, commentId: \"{commentId}\"}"
+ *      -l http://localhost/api/v1/tickets/updatecomment
+ *
+ * @apiParamExample {json} Request:
+ * {
+ *      "comment": "Comment Text",
+ *      "owner": {OwnerId},
+ *      "commentId": {commentId}
+ * }
+ *
+ * @apiSuccess {boolean} success Successful
+ * @apiSuccess {string} error Error if occurrred
+ * @apiSuccess {object} ticket Ticket Object
+ *
+ * @apiError InvalidPostData The data was invalid
+ * @apiErrorExample
+ *      HTTP/1.1 400 Bad Request
+ {
+     "error": "Invalid Post Data"
+ }
+ */
+apiTickets.updateComment = function (req, res) {
+  var commentJson = req.body
+  var comment = commentJson.comment
+  var owner = commentJson.ownerId || req.user._id
+  var commentId = commentJson.commentId
+  var ticketId = commentJson.ticketId
+
+  console.log(comment)
+
+  if (_.isUndefined(commentId)) return res.status(400).json({ success: false, error: 'Invalid comment id' })
+  if (_.isUndefined(owner)) return res.status(400).json({ success: false, error: 'Invalid owner  id' })
+  var ticketModel = require('../../../models/ticket')
+
+  comment = sanitizeHtml(comment).trim()
+
+  ticketModel.getTicketById(ticketId, function (err, ticket) {
+    if (err) return res.status(400).json({ success: false, error: 'Invalid Post Data' })
+
+    ticket.updateComment(owner, commentId, comment, function (err, t) {
+      if (err) throw err
+      t.save(function (err, t) {
+        if (err) throw err
+        return res.json({ success: true, error: null, ticket: ticket })
+      })
+    })
+  })
+}
+
+/**
  * @api {post} /api/v1/tickets/addnote Add Note
  * @apiName addInternalNote
  * @apiDescription Adds a note to the given Ticket Id
@@ -1619,7 +1679,7 @@ apiTickets.getTicketStats = function (req, res) {
   // return res.send(obj);
 }
 
-function parseTicketStats(role, tickets, callback) {
+function parseTicketStats (role, tickets, callback) {
   if (_.isEmpty(tickets)) return callback({ tickets: tickets, tags: {} })
   var t = []
   var tags = {}

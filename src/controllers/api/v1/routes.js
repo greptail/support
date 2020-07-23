@@ -57,6 +57,8 @@ module.exports = function (middleware, router, controllers) {
 
   router.get('/api/v1/tickets/overdue', apiv1, canUser('tickets:view'), apiCtrl.tickets.getOverdue)
   router.post('/api/v1/tickets/addcomment', apiv1, canUser('comments:create'), apiCtrl.tickets.postComment)
+  router.post('/api/v1/tickets/updatecomment', apiv1, canUser('comments:create'), apiCtrl.tickets.updateComment)
+
   router.post('/api/v1/tickets/addnote', apiv1, canUser('tickets:notes'), apiCtrl.tickets.postInternalNote)
   router.get('/api/v1/tickets/tags', apiv1, apiCtrl.tickets.getTags)
   router.get('/api/v1/tickets/count/tags', apiv1, apiCtrl.tickets.getTagCount)
@@ -103,7 +105,6 @@ module.exports = function (middleware, router, controllers) {
     apiv1,
     apiCtrl.tickets.addAttachment
   )
-
 
   // Tags
   router.get('/api/v1/count/tags', middleware.api, function (req, res) {

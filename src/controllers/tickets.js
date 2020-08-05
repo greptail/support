@@ -615,6 +615,7 @@ ticketsController.uploadAttachment = function (req, res) {
       mimetype.indexOf('audio/wav') === -1 &&
       mimetype.indexOf('application/x-zip-compressed') === -1 &&
       mimetype.indexOf('application/pdf') === -1 &&
+      mimetype.indexOf('application/octet-stream') === -1 &&
       //  Office Mime-Types
       mimetype.indexOf('application/msword') === -1 &&
       mimetype.indexOf('application/vnd.openxmlformats-officedocument.wordprocessingml.document') === -1 &&

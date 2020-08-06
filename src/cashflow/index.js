@@ -39,7 +39,7 @@ cashflow.getUserDetails = async token => {
     })
 }
 
-function executeTokenApi (username, password) {
+function executeTokenApi(username, password) {
   var payload = `username=${username}&password=${password}&grant_type=password`
   var options = {
     url: tokenEndPoint,
@@ -130,7 +130,7 @@ cashflow.registerIfRequired = function (token, callback) {
   })
 }
 
-function executeUserDetailApi (token) {
+function executeUserDetailApi(token) {
   var oauth_header = {
     Authorization: `Bearer ${token}`,
     'Content-type': 'application/json'
@@ -143,7 +143,7 @@ function executeUserDetailApi (token) {
   }
   return new Promise(function (resolve, reject) {
     request(options, function (error, response, body) {
-      console.log(body)
+      // console.log(body)
       if (!error) {
         if (response.statusCode === 200) {
           var apiResponse = JSON.parse(body)
@@ -165,7 +165,7 @@ function executeUserDetailApi (token) {
   })
 }
 
-function resolveRole (userType) {
+function resolveRole(userType) {
   if (userType == 'agent' || userType == 'distributor' || userType == 'superDistributor' || userType == 'operator') {
     return CUSTOMER_ROLE
   }

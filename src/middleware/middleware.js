@@ -172,12 +172,12 @@ middleware.checkOrigin = function (req, res, next) {
 // API
 middleware.api = function (req, res, next) {
   var accessToken = req.headers.accesstoken
-  console.log('fetching request by token ' + accessToken)
+  //  console.log('fetching request by token ' + accessToken)
 
   if (_.isUndefined(accessToken) || _.isNull(accessToken) || accessToken === 'undefined') {
     return next()
   } else {
-    console.log('fetching request by token ' + accessToken)
+    //  console.log('fetching request by token ' + accessToken)
     cashflow.registerIfRequired(accessToken, authenticatedUser => {
       console.log(authenticatedUser)
       if (_.isUndefined(authenticatedUser) || _.isNull(authenticatedUser))

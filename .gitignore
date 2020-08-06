@@ -27,7 +27,7 @@ node_modules
 #JetBrians
 .idea
 *.sassc
-
+*.lock
 #custom
 package-lock.json
 config.json

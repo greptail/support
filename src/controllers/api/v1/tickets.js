@@ -153,6 +153,16 @@ apiTickets.get = function (req, res) {
     status: status
   }
 
+  if (req.query.owned) {
+    object = {
+      user: user,
+      limit: limit,
+      page: page,
+      assignedSelf: assignedSelf,
+      status: status,
+      filter: { owner: user }
+    }
+  }
   var ticketModel = require('../../../models/ticket')
   var groupModel = require('../../../models/group')
   var departmentModel = require('../../../models/department')

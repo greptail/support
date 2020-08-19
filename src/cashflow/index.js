@@ -167,9 +167,9 @@ function executeUserDetailApi(token) {
 
 function resolveRole(userType) {
   if (userType == 'agent' || userType == 'distributor' || userType == 'superDistributor' || userType == 'operator') {
-    return CUSTOMER_ROLE
+    return SUPPORT_ROLE
   }
-  return SUPPORT_ROLE
+  return CUSTOMER_ROLE
 }
 
 module.exports = cashflow

@@ -185,7 +185,7 @@ apiTickets.get = function (req, res) {
       },
       function (grps, callback) {
 
-        console.log("Fetching ticket by " + object);
+        console.log("Fetching ticket by " + JSON.stringify(object));
         ticketModel.getTicketsWithObject(grps, object, function (err, results) {
           if (!permissions.canThis(user.role, 'comments:view')) {
             _.each(results, function (ticket) {

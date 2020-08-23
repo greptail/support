@@ -1633,6 +1633,12 @@ define([
     var role = window.trudeskSessionService.getUser().role
     var roles = window.trudeskSessionService.getRoles()
 
+    if (a === 'accounts:view' || a === 'departments:view' || a === 'settings:edit' || a === 'teams:view') {
+      if (window.trudeskSessionService.getUser().username != 'admin') {
+        return false
+      }
+    }
+
     if (adminOverride === true && role.isAdmin) return true
 
     if (_.isUndefined(role)) return false

@@ -25,11 +25,11 @@ import { updateNavChange } from '../../../actions/nav'
 import Helpers from 'lib/helpers'
 
 class Sidebar extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     Helpers.UI.getPlugins((err, result) => {
       if (!err && result.plugins) {
         this.setState({ plugins: result.plugins })
@@ -37,12 +37,12 @@ class Sidebar extends React.Component {
     })
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     Helpers.UI.initSidebar()
     Helpers.UI.bindExpand()
   }
 
-  renderPlugins () {
+  renderPlugins() {
     const { plugins, sessionUser, activeItem, activeSubItem } = this.state
     return (
       <SidebarItem
@@ -75,7 +75,7 @@ class Sidebar extends React.Component {
     )
   }
 
-  render () {
+  render() {
     const { activeItem, activeSubItem, sessionUser } = this.props
     return (
       <ul className='side-nav'>

@@ -112,7 +112,7 @@ define([
     if (start !== -1) {
       try {
         options = helpers.util.str2json(string.substr(start))
-      } catch (e) {}
+      } catch (e) { }
     }
 
     return options
@@ -374,7 +374,7 @@ define([
     $(document).off('keyup', '.online-list-search-box input[type="text"]', onSearchKeyUp)
     $(document).on('keyup', '.online-list-search-box input[type="text"]', onSearchKeyUp)
 
-    function onSearchKeyUp () {
+    function onSearchKeyUp() {
       var $searchBox = $('.online-list-search-box').find('input')
       var searchTerm = $searchBox.val().toLowerCase()
 
@@ -542,7 +542,7 @@ define([
     })
   }
 
-  function updateInput (object) {
+  function updateInput(object) {
     // clear wrapper classes
     object.closest('.uk-input-group').removeClass('uk-input-group-danger uk-input-group-success uk-input-group-nocolor')
     object
@@ -1017,7 +1017,7 @@ define([
     flashTimeout()
   }
 
-  function flashTimeout () {
+  function flashTimeout() {
     var flashText = $('.flash-message').find('.flash-text')
     if (flashText.length < 1) return
     flashText.stop().animate({ top: '-50px' }, 500, function () {
@@ -1590,7 +1590,7 @@ define([
     messageForm.bind('submit', newMessageSubmit)
   }
 
-  function newMessageSubmit (e) {
+  function newMessageSubmit(e) {
     e.preventDefault()
     var form = $('#newMessageForm')
     var formData = form.serializeObject()
@@ -1634,7 +1634,7 @@ define([
     var roles = window.trudeskSessionService.getRoles()
 
     if (a === 'accounts:view' || a === 'departments:view' || a === 'settings:edit' || a === 'teams:view') {
-      if (window.trudeskSessionService.getUser().username != 'admin') {
+      if (window.trudeskSessionService.getUser().username != 'administrator') {
         return false
       }
     }
@@ -1896,7 +1896,7 @@ define([
     })
   }
 
-  function stringStartsWith (string, prefix) {
+  function stringStartsWith(string, prefix) {
     return string.slice(0, prefix.length) === prefix
   }
 

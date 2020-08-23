@@ -1635,7 +1635,7 @@ define([
 
     console.log("@CanUser" + window.trudeskSessionService.getUser().username)
     if (a === 'accounts:view' || a === 'departments:view' || a === 'settings:edit' || a === 'teams:view' || a === 'groups:view') {
-      if (window.trudeskSessionService.getUser().username != 'administrator') {
+      if (window.trudeskSessionService.getUser().username != 'admin') {
         return false
       }
     }

@@ -1633,7 +1633,8 @@ define([
     var role = window.trudeskSessionService.getUser().role
     var roles = window.trudeskSessionService.getRoles()
 
-    if (a === 'accounts:view' || a === 'departments:view' || a === 'settings:edit' || a === 'teams:view') {
+    console.log("@CanUser" + window.trudeskSessionService.getUser().username)
+    if (a === 'accounts:view' || a === 'departments:view' || a === 'settings:edit' || a === 'teams:view' || a === 'groups:view') {
       if (window.trudeskSessionService.getUser().username != 'administrator') {
         return false
       }

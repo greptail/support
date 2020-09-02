@@ -134,7 +134,7 @@ class IssuePartial extends React.Component {
         <div className='issue-text'>
           <h3 className='subject-text'>{this.subject}</h3>
           <a href={`mailto:${this.owner.email}`}>
-            {this.owner.fullname} &lt;{this.owner.email}&gt;
+            {this.owner.fullname} &lt;{this.owner.username}&gt;
           </a>
           <br />
           <time dateTime={helpers.formatDate(this.props.date, 'YYYY-MM-DD HH:mm')}>

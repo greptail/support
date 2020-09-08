@@ -251,15 +251,15 @@ viewController.getData = function (request, cb) {
         viewController.getConversations(request, function (err, conversations) {
           if (err) return callback(err)
 
-          viewdata.conversations = conversations
+          viewdata.conversations = []
 
           return callback()
         })
       },
       function (callback) {
         viewController.getUsers(request, function (users) {
-          viewdata.users = users
-
+          //viewdata.users = [users]
+          viewdata.users = []
           return callback()
         })
       },
@@ -273,7 +273,8 @@ viewController.getData = function (request, cb) {
         viewController.getTeams(request, function (err, teams) {
           if (err) return callback(null, null)
 
-          viewdata.teams = teams
+          //viewdata.teams = teams
+          viewdata.teams = []
           return callback()
         })
       },
@@ -281,8 +282,8 @@ viewController.getData = function (request, cb) {
         viewController.getGroups(request, function (err, data) {
           if (err) return callback(null, null)
 
-          viewdata.groups = data
-
+          //viewdata.groups = data
+          viewdata.groups = []
           return callback()
         })
       },

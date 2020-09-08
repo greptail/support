@@ -119,6 +119,18 @@ ticketsV2.get = function (req, res) {
     function (err, resultObject) {
       if (err) return apiUtils.sendApiError(res, 500, err.message)
 
+      console.log(resultObject)
+
+      for (var i = 0; i < resultObject.tickets.length; i++) {
+        //suppressing to reduce network load
+        resultObject.tickets[i].issue = '..'
+        resultObject.tickets[i].comments = []
+        resultObject.tickets[i].history = []
+        resultObject.tickets[i].group = {}
+        resultObject.tickets[i].subscribers = []
+        resultObject.tickets[i].attachments = []
+      }
+
       return apiUtils.sendApiSuccess(res, {
         tickets: resultObject.tickets,
         count: resultObject.tickets.length,

@@ -298,7 +298,6 @@ ticketsController.processor = function (req, res) {
   content.data = {}
   content.data.user = req.user
   content.data.common = req.viewdata
-
   var object = processor.object
   content.data.page = object.page
   content.data.filter = object.filter

@@ -28,7 +28,7 @@ define('modules/socket', ['modules/chat', 'modules/ui', 'modules/socket.io/accou
   ui.init(socket)
   sClient.ui = ui
 
-  chat.init(socket)
+  //chat.init(socket)
   sClient.chat = chat
 
   accountsImporter.init(socket)

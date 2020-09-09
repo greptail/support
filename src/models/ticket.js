@@ -841,6 +841,7 @@ ticketSchema.statics.getTicketsWithObject = function (grpId, object, callback) {
   var q = self
     .model(COLLECTION)
     .find({ group: { $in: grpId }, deleted: false })
+    .select('-issue -comments -history -group -subscribers -attachments')
     .populate(
       'owner assignee subscribers comments.owner notes.owner history.owner',
       'username fullname email role image title'

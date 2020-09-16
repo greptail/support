@@ -243,7 +243,8 @@ class SingleTicketContainer extends React.Component {
     const hasTicketUpdate =
       this.ticket &&
       this.ticket.status !== 3 &&
-      (helpers.hasPermOverRole(this.ticket.assignee ? this.ticket.assignee.role : null, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner?this.ticket.owner.role, null, 'tickets:update', true));
+    
+      (helpers.hasPermOverRole(this.ticket.assignee ? this.ticket.assignee.role : null, null, 'tickets:update', true) || helpers.hasPermOverRole(this.ticket.owner?this.ticket.owner.role:null, null, 'tickets:update', true));
 
 
     return (

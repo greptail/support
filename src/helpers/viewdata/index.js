@@ -274,7 +274,7 @@ viewController.getData = function (request, cb) {
           if (err) return callback(null, null)
 
           viewdata.teams = teams
-          viewdata.teams = []
+        //  viewdata.teams = []
           return callback()
         })
       },
@@ -283,7 +283,7 @@ viewController.getData = function (request, cb) {
           if (err) return callback(null, null)
 
           viewdata.groups = data
-          viewdata.groups = []
+         // viewdata.groups = []
           return callback()
         })
       },

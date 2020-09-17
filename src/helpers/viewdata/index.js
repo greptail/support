@@ -272,19 +272,23 @@ viewController.getData = function (request, cb) {
       function (callback) {
         viewController.getTeams(request, function (err, teams) {
           if (err) return callback(null, null)
-
           viewdata.teams = teams
-        //  viewdata.teams = []
+          for (index = 0; index < viewdata.teams.length; index++) 
+          { 
+            viewdata.teams[index]=[]; 
+          } 
           return callback()
         })
       },
       function (callback) {
         viewController.getGroups(request, function (err, data) {
           if (err) return callback(null, null)
-
           viewdata.groups = data
-         // viewdata.groups = []
-          return callback()
+          for (index = 0; index < viewdata.groups.length; index++) 
+          {             
+            viewdata.groups[index]=[]; 
+          } 
+           return callback()
         })
       },
       function (callback) {

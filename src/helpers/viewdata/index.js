@@ -273,7 +273,7 @@ viewController.getData = function (request, cb) {
         viewController.getTeams(request, function (err, teams) {
           if (err) return callback(null, null)
 
-          //viewdata.teams = teams
+          viewdata.teams = teams
           viewdata.teams = []
           return callback()
         })
@@ -282,7 +282,7 @@ viewController.getData = function (request, cb) {
         viewController.getGroups(request, function (err, data) {
           if (err) return callback(null, null)
 
-          //viewdata.groups = data
+          viewdata.groups = data
           viewdata.groups = []
           return callback()
         })

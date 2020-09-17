@@ -627,7 +627,14 @@ function processReportData (tickets) {
     t.push(moment(ticket.date).format('MMM DD, YY HH:mm:ss'))
     t.push(ticket.subject)
     t.push(ticket.owner.fullname)
-    t.push(ticket.group.name)
+    if (ticket.group)
+    {
+      t.push(ticket.group.name)
+    }
+    else
+    {
+      t.push("NAME") 
+    }
     if (ticket.assignee) {
       t.push(ticket.assignee.fullname)
     } else {

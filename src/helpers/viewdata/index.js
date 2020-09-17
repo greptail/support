@@ -275,7 +275,7 @@ viewController.getData = function (request, cb) {
           viewdata.teams = teams
           for (index = 0; index < viewdata.teams.length; index++) 
           { 
-            viewdata.teams[index]=[]; 
+            viewdata.teams[index].members=[]; 
           } 
           return callback()
         })
@@ -286,7 +286,7 @@ viewController.getData = function (request, cb) {
           viewdata.groups = data
           for (index = 0; index < viewdata.groups.length; index++) 
           {             
-            viewdata.groups[index]=[]; 
+            viewdata.groups[index].members=[]; 
           } 
            return callback()
         })

@@ -625,6 +625,11 @@ function processReportData (tickets) {
     t.push(ticket.priority.name)
     t.push(ticket.statusFormatted)
     t.push(moment(ticket.date).format('MMM DD, YY HH:mm:ss'))
+    if (ticket.update)
+    {
+     t.push(moment(ticket.updated).format('MMM DD, YY HH:mm:ss'))
+    }
+    
     t.push(ticket.subject)
     t.push(ticket.owner.fullname)
     if (ticket.group)

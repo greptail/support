@@ -670,6 +670,7 @@ function processResponse (res, input) {
     priority: 'priority',
     status: 'status',
     created: 'created',
+    created: 'updated',
     subject: 'subject',
     requester: 'requester',
     group: 'group',

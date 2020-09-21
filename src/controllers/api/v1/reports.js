@@ -629,6 +629,10 @@ function processReportData (tickets) {
     {
      t.push(moment(ticket.updated).format('MMM DD, YY HH:mm:ss'))
     }
+    else
+    {
+      t.push(moment(ticket.date).format('MMM DD, YY HH:mm:ss'))
+    }
     
     t.push(ticket.subject)
     t.push(ticket.owner.fullname)
@@ -670,7 +674,7 @@ function processResponse (res, input) {
     priority: 'priority',
     status: 'status',
     created: 'created',
-    created: 'updated',
+    updated: 'updated',
     subject: 'subject',
     requester: 'requester',
     group: 'group',

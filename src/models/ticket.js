@@ -841,13 +841,13 @@ ticketSchema.statics.getTicketsWithObject = function (grpId, object, callback) {
   var q = self
     .model(COLLECTION)
     .find({ group: { $in: grpId }, deleted: false })
-    .select('-issue -comments -history -group -subscribers -attachments')
+    .select('-issue -comments -history -subscribers -attachments group.name')
     .populate(
       'owner assignee subscribers comments.owner notes.owner history.owner',
       'username fullname email role image title'
     )
     .populate('assignee', 'username fullname email role image title')
-    .populate('type tags group')
+    .populate('type tags group.name')
     .sort({ uid: -1 })
 
   if (limit !== -1) {

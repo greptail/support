@@ -624,14 +624,14 @@ function processReportData (tickets) {
     t.push(ticket.type.name)
     t.push(ticket.priority.name)
     t.push(ticket.statusFormatted)
-    t.push(moment(ticket.date).format('MMM DD, YY HH:mm:ss'))
+    t.push(moment(ticket.date).format('DD/MM/YYYY HH:mm:ss'))
     if (ticket.update)
     {
-     t.push(moment(ticket.updated).format('MMM DD, YY HH:mm:ss'))
+     t.push(moment(ticket.updated).format('DD/MM/YYYY HH:mm:ss'))
     }
     else
     {
-      t.push(moment(ticket.date).format('MMM DD, YY HH:mm:ss'))
+      t.push(moment(ticket.date).format('DD/MM/YYYY HH:mm:ss'))
     }
     
     t.push(ticket.subject)

@@ -635,7 +635,14 @@ function processReportData (tickets) {
     }
     
     t.push(ticket.subject)
-    t.push(ticket.owner.fullname)
+    if (ticket.owner)
+    {
+      t.push(ticket.owner.fullname)
+    }
+    else
+    {
+      t.push("anonymous")
+    }
     if (ticket.group)
     {
       t.push(ticket.group.name)

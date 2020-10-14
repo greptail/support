@@ -843,8 +843,8 @@ ticketSchema.statics.getTicketsWithObject = function (grpId, object, callback) {
     .find({ group: { $in: grpId }, deleted: false })
     .select('-issue -comments -history -subscribers -attachments')
     .populate(
-      'group.name owner assignee subscribers comments.owner notes.owner history.owner',
-      'username fullname email role image title'
+      'owner assignee subscribers comments.owner notes.owner history.owner',
+      'username fullname email role image title group.name'
     )
     .populate('assignee', 'username fullname email role image title')
     .populate('type tags group')

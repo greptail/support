@@ -64,13 +64,27 @@ module.exports = function () {
             })
         } else {
           cashflow.getToken(username, password).then(oauth => {
-            cashflow.registerIfRequired(oauth.access_token, user => {
+            cashflow.getUserDetails(oauth.access_token, user => {
               console.log(user)
               if (_.isUndefined(user) || _.isNull(user)) {
                 return done(null, false, req.flash('loginMessage', 'Invalid User Or Password.'))
               }
-              req.user = user
-              return done(null, user)
+
+              if (response.code === 200) {
+                if (result.userType === 'managementUser') {
+                  cashflow.registerIfRequired(oauth.access_token, user => {
+                    console.log(user)
+                    if (_.isUndefined(user) || _.isNull(user)) {
+                    }
+                    req.user = user
+                    return done(null, user)
+                  })
+                } else {
+                  return done(null, false, req.flash('loginMessage', 'Invalid User Or Password.'))
+                }
+              } else {
+                return done(null, false, req.flash('loginMessage', 'Invalid User Or Password.'))
+              }
             })
           })
         }

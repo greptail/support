@@ -39,7 +39,7 @@ cashflow.getUserDetails = async token => {
     })
 }
 
-function executeTokenApi(username, password) {
+function executeTokenApi (username, password) {
   var payload = `username=${username}&password=${password}&grant_type=password`
   var options = {
     url: tokenEndPoint,
@@ -110,16 +110,6 @@ cashflow.registerIfRequired = function (token, callback) {
           })
         } else {
           console.log('User already registered...')
-          /*
-                                                user.accessToken = token;
-                                                console.log("Updating latest token ");
-                                                user.save(function (err, a) {
-                                                    if (err) {
-                                                        console.log(err);
-                                                    }
-                                                    callback(user);
-                                                });
-                        */
 
           callback(user)
         }
@@ -130,7 +120,7 @@ cashflow.registerIfRequired = function (token, callback) {
   })
 }
 
-function executeUserDetailApi(token) {
+function executeUserDetailApi (token) {
   var oauth_header = {
     Authorization: `Bearer ${token}`,
     'Content-type': 'application/json'
@@ -165,7 +155,7 @@ function executeUserDetailApi(token) {
   })
 }
 
-function resolveRole(userType) {
+function resolveRole (userType) {
   if (userType == 'agent' || userType == 'distributor' || userType == 'superDistributor' || userType == 'operator') {
     return CUSTOMER_ROLE
   }

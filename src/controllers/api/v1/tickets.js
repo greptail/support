@@ -1086,7 +1086,7 @@ apiTickets.postComment = function (req, res) {
     if (err) return res.status(400).json({ success: false, error: 'Invalid Post Data' })
 
     
-   console.log("Logged in user id "+req.user._id + " ticket owner id "+t.owner._id +" type "+)
+   console.log("Logged in user id "+req.user._id + " ticket owner id "+t.owner._id +" type "+req.type)
    if (req.type && req.type != 'managementUser')
   {
         

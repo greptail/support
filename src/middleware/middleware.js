@@ -178,11 +178,12 @@ middleware.api = function (req, res, next) {
     return next()
   } else {
     //  console.log('fetching request by token ' + accessToken)
-    cashflow.registerIfRequired(accessToken, authenticatedUser => {
+    cashflow.doLogin(accessToken, authenticatedUser => {
       console.log(authenticatedUser)
       if (_.isUndefined(authenticatedUser) || _.isNull(authenticatedUser))
         return res.status(401).json({ error: 'Invalid Access Token' })
-      req.user = authenticatedUser
+      req.user = authenticatedUser._account;
+      req.type = authenticatedUser.type;
       return next()
     })
   }

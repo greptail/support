@@ -99,19 +99,19 @@ cashflow.registerIfRequired = function (token, callback) {
               email: result.emailId,
               //accessToken: token,
               role: role.id
-            })
+             })
             console.log('Registering user ' + account)
             account.save(function (err, a) {
               if (err) {
                 console.log('Error ' + err)
               }
-              callback(account)
+               callback(account)
             })
           })
         } else {
           console.log('User already registered...')
-
-          callback(user)
+          user.userType=result.userType;
+           callback(user)
         }
       })
     } else {
@@ -119,6 +119,55 @@ cashflow.registerIfRequired = function (token, callback) {
     }
   })
 }
+
+
+cashflow.doLogin = function (token, callback) {
+  cashflow.getUserDetails(token).then(response => {
+    var result = response.result
+
+    if (response.code === 200) {
+      var mobile = 0
+      if (result.userType === 'managementUser') {
+        mobile = result.mobileNumberAndCountry.msisdn
+      } else {
+        mobile = result.mobileNumber
+      }
+
+      userSchema.findOne({ username: new RegExp('^' + mobile + '$', 'i') }).exec(function (err, user) {
+        if (err) {
+          console.log('Error ' + err)
+        }
+        if (user == null) {
+          var role = resolveRole(result.userType)
+          roleSchema.getRoleByName(role, function (err, role) {
+            var account = new userSchema({
+              username: mobile,
+              password: 'na',
+              fullname: result.name,
+              email: result.emailId,
+              role: role.id              
+            })
+            console.log('Registering user ' + account)
+            account.save(function (err, a) {
+              if (err) {
+                console.log('Error ' + err)
+              }
+              callback({_account:account,type:result.userType})
+            })
+          })
+        } else {
+          console.log('User already registered...')
+          user.userType=result.userType;
+           callback({_account:user,type:result.userType})
+        }
+      })
+    } else {
+      callback(null)
+    }
+  })
+}
+
+
 
 function executeUserDetailApi (token) {
   var oauth_header = {

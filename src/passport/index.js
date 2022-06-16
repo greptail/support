@@ -42,7 +42,7 @@ module.exports = function () {
         passReqToCallback: true
       },
       function (req, username, password, done) {
-        if (username === 'admin') {
+        if (username === 'admin' || username==='customer_care') {
           User.findOne({ username: new RegExp('^' + username.trim() + '$', 'i') })
             .select('+password +tOTPKey +tOTPPeriod')
             .exec(function (err, user) {

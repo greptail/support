@@ -23,7 +23,7 @@
 var _ = require('lodash')
 var moment = require('moment-timezone')
 require('moment-duration-format')(moment)
-
+global.timezone='Asia/Calcutta';
 // The module to be exported
 var helpers = {
   concat: function (a, b, space, comma) {
@@ -518,6 +518,7 @@ var helpers = {
   },
 
   formatDate: function (date, format) {
+    console.log(global.timezone);
     if (!date) return ''
     return moment
       .utc(date)
@@ -526,6 +527,7 @@ var helpers = {
   },
 
   formatDateParse: function (date, parseFormat, returnFormat) {
+    console.log(global.timezone);
     return moment
       .utc(date, parseFormat)
       .tz(global.timezone)

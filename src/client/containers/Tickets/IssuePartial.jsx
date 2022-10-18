@@ -133,7 +133,7 @@ class IssuePartial extends React.Component {
         {/* Issue */}
         <div className='issue-text'>
           <h3 className='subject-text'>{this.subject}</h3>
-          <a href={`mailto:${this.owner.email}`}>
+          <a href={`tel:${this.owner.username}`}>
             {this.owner.fullname} &lt;{this.owner.username}&gt;
           </a>
           <br />
